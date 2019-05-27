@@ -10,24 +10,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.iu.action.ActionForward;
-import com.iu.board.qna.QnaService;
-
+import com.iu.upload.UploadDAO;
+import com.iu.upload.UploadService;
 
 /**
- * Servlet implementation class QnaController
+ * Servlet implementation class FileController
  */
-@WebServlet("/QnaController")
-public class QnaController extends HttpServlet {
+@WebServlet("/FileController")
+public class UploadController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private QnaService qnaService;
+	private UploadService uploadService;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public QnaController() {
+    public UploadController() {
         super();
-        qnaService = new QnaService() {
-		};
+        uploadService = new UploadService();
         // TODO Auto-generated constructor stub
     }
 
@@ -35,41 +34,31 @@ public class QnaController extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
+
+		/* /file/fileDelete */
+		
 		String command = request.getPathInfo();
 		ActionForward actionForward = null;
 		
-		if(command.equals("/qnaList")) {
+		if(command.equals("/fileDelete")) {
 			
-			actionForward = qnaService.list(request, response);
+			actionForward = uploadService.delete(request, response);
 			
-		} else if(command.equals("/qnaWrite")){
+		} else {
 			
-			actionForward = qnaService.insert(request, response);
-			
-		} else if(command.equals("/qnaSelect")){
-			
-			actionForward = qnaService.select(request, response);
-			
-		} else if(command.equals("/qnaUpdate")){
-			
-			actionForward = qnaService.update(request, response);
 			
 		}
-		 
-		request.setAttribute("board", "qna"); //서비스에서 보드값 안먹히면 여기서 주기
 		
 		if(actionForward.isCheck()) {
 			
-			//포워드
 			RequestDispatcher view = request.getRequestDispatcher(actionForward.getPath());
 			view.forward(request, response);
 			
 		} else {
 			
-			//리다이렉트
 			response.sendRedirect(actionForward.getPath());
 		}
+		
 	
 	}
 

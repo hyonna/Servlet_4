@@ -1,6 +1,6 @@
 package com.iu.action;
 
-public class ActionFoward {
+public class ActionForward {
 	
 	private boolean check;
 	private String path;

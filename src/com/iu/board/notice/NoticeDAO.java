@@ -84,9 +84,27 @@ public class NoticeDAO implements BoardDAO{
 
 	@Override
 	public BoardDTO selectOne(int num, Connection con) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		NoticeDTO noticeDTO= null;
+		String sql ="select * from notice where num=?";
+		PreparedStatement st = con.prepareStatement(sql);
+		st.setInt(1, num);
+		ResultSet rs = st.executeQuery();
+		if(rs.next()) {
+			noticeDTO = new NoticeDTO();
+			noticeDTO.setNum(rs.getInt("num"));
+			noticeDTO.setTitle(rs.getString("title"));
+			noticeDTO.setContents(rs.getString("contents"));
+			noticeDTO.setName(rs.getString("name"));
+			noticeDTO.setReg_date(rs.getDate("reg_date"));
+			noticeDTO.setHit(rs.getInt("hit"));
+		}
+		
+		rs.close();
+		st.close();
+		
+		return noticeDTO;
 	}
+	
 
 	@Override
 	public int insert(BoardDTO boardDTO, Connection con) throws Exception {

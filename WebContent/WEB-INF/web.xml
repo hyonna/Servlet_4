@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" id="WebApp_ID" version="4.0">
-   <servlet>
+  <servlet>
     <servlet-name>home</servlet-name>
     <servlet-class>com.iu.control.HomeController</servlet-class>
   </servlet>
@@ -24,5 +24,28 @@
     <servlet-name>qna</servlet-name>
     <url-pattern>/qna/*</url-pattern>
   </servlet-mapping>
- 
+  <servlet>
+    <servlet-name>member</servlet-name>
+    <servlet-class>com.iu.control.MemberController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>member</servlet-name>
+    <url-pattern>/member/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>upload</servlet-name>
+    <servlet-class>com.iu.control.UploadController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>upload</servlet-name>
+    <url-pattern>/file/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>comments</servlet-name>
+    <servlet-class>com.iu.control.CommentsController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>comments</servlet-name>
+    <url-pattern>/comments/*</url-pattern>
+  </servlet-mapping>
 </web-app>

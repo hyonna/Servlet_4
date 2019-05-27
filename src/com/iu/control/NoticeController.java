@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.iu.action.ActionFoward;
+import com.iu.action.ActionForward;
 import com.iu.board.notice.NoticeService;
 
 
@@ -40,7 +40,7 @@ public class NoticeController extends HttpServlet {
 		
 		
 		String command = request.getPathInfo();
-		ActionFoward actionFoward = null;
+		ActionForward actionFoward = null;
 		
 		if(command.equals("/noticeList")) {
 			
@@ -52,7 +52,6 @@ public class NoticeController extends HttpServlet {
 			
 		} else if(command.equals("/noticeUpdate")) {
 			
-			actionFoward = noticeService.select(request, response);
 			actionFoward = noticeService.update(request, response);
 			
 		} else if(command.equals("/noticeWrite")) {
@@ -65,7 +64,7 @@ public class NoticeController extends HttpServlet {
 			
 		} else { //이상한 주소가 들어오면 다른 곳으로 보내버릴때
 			
-			actionFoward = new ActionFoward();
+			actionFoward = new ActionForward();
 			
 			
 		}

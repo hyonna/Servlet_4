@@ -10,24 +10,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.iu.action.ActionForward;
-import com.iu.board.qna.QnaService;
-
+import com.iu.member.MemberService;
 
 /**
- * Servlet implementation class QnaController
+ * Servlet implementation class MemberController
  */
-@WebServlet("/QnaController")
-public class QnaController extends HttpServlet {
+@WebServlet("/MemberController")
+public class MemberController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private QnaService qnaService;
+	private MemberService memberService;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public QnaController() {
+    public MemberController() {
         super();
-        qnaService = new QnaService() {
-		};
+        memberService = new MemberService();
         // TODO Auto-generated constructor stub
     }
 
@@ -37,37 +35,28 @@ public class QnaController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
 		String command = request.getPathInfo();
-		ActionForward actionForward = null;
+		ActionForward actionForward = new ActionForward();
 		
-		if(command.equals("/qnaList")) {
+		if(command.equals("/idCheck")) {
 			
-			actionForward = qnaService.list(request, response);
+			actionForward = memberService.idCheck(request, response);
 			
-		} else if(command.equals("/qnaWrite")){
+		} else if(command.equals("/memberLogin")) {
 			
-			actionForward = qnaService.insert(request, response);
+			actionForward = memberService.login(request, response);
 			
-		} else if(command.equals("/qnaSelect")){
+		} else if(command.equals("/memberLogout")){
 			
-			actionForward = qnaService.select(request, response);
-			
-		} else if(command.equals("/qnaUpdate")){
-			
-			actionForward = qnaService.update(request, response);
-			
+			actionForward = memberService.logout(request, response);
 		}
-		 
-		request.setAttribute("board", "qna"); //서비스에서 보드값 안먹히면 여기서 주기
-		
+	
 		if(actionForward.isCheck()) {
 			
-			//포워드
 			RequestDispatcher view = request.getRequestDispatcher(actionForward.getPath());
 			view.forward(request, response);
 			
 		} else {
 			
-			//리다이렉트
 			response.sendRedirect(actionForward.getPath());
 		}
 	

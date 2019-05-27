@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.iu.action.Action;
-import com.iu.action.ActionFoward;
+import com.iu.action.ActionForward;
 import com.iu.board.BoardDTO;
 import com.iu.page.SearchMakePage;
 import com.iu.page.SearchPager;
@@ -35,8 +35,8 @@ public class NoticeService implements Action {
 	}
 
 	@Override
-	public ActionFoward list(HttpServletRequest request, HttpServletResponse response) {
-		ActionFoward actionFoward = new ActionFoward();
+	public ActionForward list(HttpServletRequest request, HttpServletResponse response) {
+		ActionForward actionFoward = new ActionForward();
 		
 		int curPage = 1; //현재페이지
 		
@@ -103,14 +103,59 @@ public class NoticeService implements Action {
 	}
 
 	@Override
-	public ActionFoward select(HttpServletRequest request, HttpServletResponse response) {
-		// TODO Auto-generated method stub
-		return null;
+	public ActionForward select(HttpServletRequest request, HttpServletResponse response) {
+		ActionForward actionForward = new ActionForward();
+		String path = "";
+		
+		BoardDTO boardDTO = null;
+		List<UploadDTO> ar = null;
+		Connection con = null;
+		
+		try {
+			
+			con = DBConnector.getConnect();
+			int num = Integer.parseInt(request.getParameter("num"));
+			boardDTO = noticeDAO.selectOne(num, con);
+			ar = uploadDAO.selectList(num, con);
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		} finally {
+			
+			try {
+				con.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		if(boardDTO != null) {
+			
+			request.setAttribute("boardDTO", boardDTO);
+			request.setAttribute("upload", ar);
+			path ="../WEB-INF/views/board/boardSelect.jsp";
+			
+		} else {
+			
+			request.setAttribute("message", "No Data");
+			request.setAttribute("path", "./noticeList");
+			path="../WEB-INF/views/common/result.jsp";
+			
+		}
+		
+		actionForward.setCheck(true);
+		actionForward.setPath(path);
+		
+		return actionForward;
 	}
+	
 
 	@Override
-	public ActionFoward insert(HttpServletRequest request, HttpServletResponse response) {
-		ActionFoward actionForward = new ActionFoward();
+	public ActionForward insert(HttpServletRequest request, HttpServletResponse response) {
+		ActionForward actionForward = new ActionForward();
 		actionForward.setCheck(true);
 		actionForward.setPath("../WEB-INF/views/board/boardWrite.jsp");
 		String method = request.getMethod();
@@ -188,13 +233,58 @@ public class NoticeService implements Action {
 
 
 	@Override
-	public ActionFoward update(HttpServletRequest request, HttpServletResponse response) {
-		// TODO Auto-generated method stub
-		return null;
+	public ActionForward update(HttpServletRequest request, HttpServletResponse response) {
+		ActionForward actionForward = new ActionForward();
+		
+		actionForward.setCheck(true);
+		actionForward.setPath("../WEB-INF/views/board/boardUpdate.jsp");
+		
+		String method = request.getMethod();
+		
+		if(method.equals("POST")) {
+			
+			
+			//MultipartRequest multi = new MultipartRequest(request, saveDirectory, maxPostSize, encoding, new DefaultFileRenamePolicy());
+			
+			
+		} else {
+			
+			int num = Integer.parseInt(request.getParameter("num"));
+			Connection con = null;
+			BoardDTO boardDTO = null;
+			List<UploadDTO> ar = null;
+			
+			try {
+				
+				con = DBConnector.getConnect();
+				boardDTO = noticeDAO.selectOne(num, con);
+				ar = uploadDAO.selectList(num, con);
+				
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				
+				try {
+					con.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}//finally끝
+			
+			request.setAttribute("boardDTO", boardDTO);
+			request.setAttribute("upload", ar);
+			
+		}
+		
+		return actionForward;
 	}
+	
 
 	@Override
-	public ActionFoward delete(HttpServletRequest request, HttpServletResponse response) {
+	public ActionForward delete(HttpServletRequest request, HttpServletResponse response) {
 		// TODO Auto-generated method stub
 		return null;
 	}
