@@ -26,6 +26,7 @@
 			
 			//2. 요청 정보 기록
 			xhttp.open("POST", "../member/idCheck", true); //true 안넣으면 디폴트로 true
+			xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 			
 			//3. 전송
 			xhttp.send("id="+$('#id').val()); //POST방식일땐 파라미터를 여기에 넣기

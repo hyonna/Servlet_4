@@ -11,114 +11,85 @@
 
 	$(function() {
 		
-		var curPage = 1;
-		
 		getList(); //함수호출
 		
-		$('#updateBtn').click(function() {
-			var upContents = $('#updateContents').val();
-			var cnumId = $('#cnum').val();
-			
-			$.post("../comments/commentsUpdate", 
-					{
-				
-					cnum:cnumId,
-					contents:upContents
-				
-					}, 
-				
-				function(data) {
-				
-						if(data.trim()=='1') {
-							
-							//location.reload();
-							getList(1);
-							//$('#c'+id).html(upContents);
-														
-						} else {
-							
-							alert('수정실패');
-						}
-			});
-			
-		});
 		
-		$('#commentslist').on('click', '.upBtn', function() {
-			
-			var id = $(this).attr('title');
-			var con = $('#c'+id).html();
-			
-			$('#updateContents').val(con);
-			$('#cnum').val(id);
-		
-		});
-		
-		
-		//////
-		$('#more').click(function() {
-			curPage++;
-			getList(curPage);
-			
-		});
-		
-		
-		/////
-			
 		
 		$('#btn').click(function() {
 			
 			var num = '${boardDTO.num}';
 			var name = $('#name').val();
 			var contents = $('#contents').val();
+			var xhttp;
 			
 			//POST방식으로
+			if(window.XMLHttpRequest) {
+				
+				xhttp = new XMLHttpRequest();
+				
+			} else {
+				
+				xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+				
+			}
 			
-			$.post("../comments/commentsWrite", 
+			xhttp.open("POST", "../comments/commentsWrite", true);
+			xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 			
-					{
-				
-				num:num,
-				name:name,
-				contents:contents
-				
-				
-					}, function(data) {
-				if(data.trim()=='1') {
+			xhttp.send("num="+num+"&name="+name+"&contents="+contents);
+			
+			xhttp.onreadystatechange = function() {
+				if(this.readyState == 4 && this.status == 200) {
 					
-					alert('등록성공');
-					location.reload();
-					getList(1);
+					//alert(this.responseText.trim()=='1'); //중복된 아이디 0, 사용가능한건 1
 					
-				} else {
+					if(this.responseText.trim()=='1') {
+						
+						alert('등록완료');
+						location.reload();
+						
+						
+					} else {
+						
+						alert('등록살패');	
+					}
 					
-					alert('등록실패');
 				}
-			});
-			
+				
+			}
 			
 		});
 		
-		
 		//리스트 가져오기
-		function getList(count) {
+		function getList() {
 			
-			$.get("../comments/commentsList?num=${boardDTO.num}&curPage="+count, function(data) {
-				var data = data.trim();
-				if(count==1){
+			var xhttp;
+			
+			if(window.XMLHttpRequest) {
+				
+				xhttp = new XMLHttpRequest();
+				
+			} else {
+				
+				xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+				
+			}
+			
+			xhttp.open("GET", "../comments/commentsList", true);
+			xhttp.send();
+			
+			xhttp.onreadystatechange = function() {
+				if(this.readyState == 4 && this.status == 200) {
 					
-					$('#commentslist').html(data);
+					$('#commentslist').append(this.responseText.trim());
 					
-				} else {
 					
-					$('#commentslist').append(data);
 				}
 				
-			})
+			}
+			
 			
 		}
-		
-		
-		
 		
 		$('#commentslist').on('click', '.delete', function() {
 			var cnum = $(this).attr('id');
@@ -128,7 +99,6 @@
 						if(data.trim()=='1') {
 							alert('삭제완료');
 							location.reload();
-							getList(1); //append가 아니라 html로 덮어씌우기
 						} else {
 							alert('삭제실패');	
 						}
@@ -136,10 +106,6 @@
 					});
 				} 
 		});
-		
-		
-		
-		
 		
 		
 	});
@@ -157,14 +123,15 @@
 
 		<h4>NUM : ${boardDTO.num}</h4> <!-- 내가 꺼내고자 하는 영역 (영역이름.가져온속성이름.getNum 인 경우 get은 생략 가능-->
 		<h4>TITLE : ${boardDTO.title}</h4>
-		<h4>CONTENTS : </h4>
-		<div>${boardDTO.contents}</div>
+		<h4>CONTENTS : ${boardDTO.contents}</h4>
 		<h4>NAME : ${boardDTO.name}</h4>
 		<h4>DATE : ${boardDTO.reg_date}</h4>
 		<h4>HIT : ${boardDTO.hit}</h4>
+		<c:catch>
 		<c:forEach items="${upload}" var="up">
 		<h4>UPLOAD : <a href="../upload/${up.fname}">${up.oname}</a></h4>
 		</c:forEach>
+		</c:catch>
 	
 	<c:if test="${board != 'notice'}">
 		<div class="container">
@@ -190,41 +157,11 @@
 				
 				
 				</table>
-				<button id="more">+ 더보기</button>
 			</div>
 		
 		
 		</div>
 	</c:if>
-	
-	<div class="container">
-	
-	<!-- Modal -->
-  <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">${session.id}</h4>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-		      <label for="contents">댓글 :</label>
-		      <textarea class="form-control" rows="5" id="updateContents" name="contents"></textarea>
-		      <input type="hidden" id="cnum">
-		    </div>
-        </div>
-        <div class="modal-footer">
-		      <button class="btn btn-primary" id="updateBtn" data-dismiss="modal">댓글 수정</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-      
-    </div>
-  </div>
-	
-	</div>
 	
 <a href="./${board}Update?num=${boardDTO.num}" class="btn btn-danger">Update</a>
 <a href="./${board}Delete?num=${boardDTO.num}" class="btn btn-danger">Delete</a>

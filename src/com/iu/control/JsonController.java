@@ -1,8 +1,6 @@
 package com.iu.control;
 
 import java.io.IOException;
-
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -10,23 +8,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.iu.action.ActionForward;
-import com.iu.upload.UploadDAO;
-import com.iu.upload.UploadService;
+import com.iu.json.JsonService;
 
 /**
- * Servlet implementation class FileController
+ * Servlet implementation class JasonController
  */
-@WebServlet("/FileController")
-public class UploadController extends HttpServlet {
+@WebServlet("/JasonController")
+public class JsonController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private UploadService uploadService;
+	private JsonService jsonService;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public UploadController() {
+    public JsonController() {
         super();
-        uploadService = new UploadService();
+        jsonService = new JsonService();
         // TODO Auto-generated constructor stub
     }
 
@@ -35,31 +32,13 @@ public class UploadController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		/* /file/fileDelete */
-		
 		String command = request.getPathInfo();
-		ActionForward actionForward = null;
 		
-		if(command.equals("/fileDelete")) {
+		if(command.equals("/jsonTest1")) {
 			
-			actionForward = uploadService.delete(request, response);
-			
-		} else if(command.equals("/fileUpload")){
-			
-			actionForward = uploadService.insert(request, response);
-			
+			jsonService.test2(request, response);
 		} else {
 			
-		}
-		
-		if(actionForward.isCheck()) {
-			
-			RequestDispatcher view = request.getRequestDispatcher(actionForward.getPath());
-			view.forward(request, response);
-			
-		} else {
-			
-			response.sendRedirect(actionForward.getPath());
 		}
 		
 	

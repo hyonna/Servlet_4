@@ -7,11 +7,50 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <c:import url="../temp/bootstrap.jsp"/>
+<script type="text/javascript" src="/Servlet_4/se2/js/HuskyEZCreator.js" charset="utf-8"></script>
 <script type="text/javascript">
+
+var oEditors = [];
 
 $(function() {
 	
-	var maxAppend = 0;
+// editor 
+	
+	nhn.husky.EZCreator.createInIFrame({
+        oAppRef: oEditors,
+        elPlaceHolder: "contents",
+        //SmartEditor2Skin.html 파일이 존재하는 경로
+        sSkinURI: "/Servlet_4/se2/SmartEditor2Skin.html",  
+        htParams : {
+            // 툴바 사용 여부 (true:사용/ false:사용하지 않음)
+            bUseToolbar : true,             
+            // 입력창 크기 조절바 사용 여부 (true:사용/ false:사용하지 않음)
+            bUseVerticalResizer : true,     
+            // 모드 탭(Editor | HTML | TEXT) 사용 여부 (true:사용/ false:사용하지 않음)
+            bUseModeChanger : true,         
+            fOnBeforeUnload : function(){
+                 
+            }
+        }, 
+        fOnAppLoad : function(){
+            //기존 저장된 내용의 text 내용을 에디터상에 뿌려주고자 할때 사용
+            oEditors.getById["contents"].exec("PASTE_HTML", [""]);
+        },
+        fCreator: "createSEditor2"
+    });
+    
+    //저장버튼 클릭시 form 전송
+    $("#save").click(function(){
+        oEditors.getById["contents"].exec("UPDATE_CONTENTS_FIELD", []);
+        $("#frm").submit();
+    });    
+
+	
+	
+	////////////////////////////////////////////
+	
+	
+	var maxAppend = ${upload.size()};
 	var d1=	0;
 	
 	//x버튼을 클릭하면 alert(pnum.val)
@@ -42,7 +81,7 @@ $(function() {
 					if(this.responseText.trim() == '1') {
 						$("#"+id).prev().remove();
 						$("#"+id).remove();
-						
+						maxAppend--;
 					} else {
 						
 						alert('삭제 실패');
@@ -95,7 +134,7 @@ $(function() {
 	
 	<h1>${board}&nbsp;Update Page</h1>
 
- <form action="./${board}Update" method="post" enctype="multipart/form-data">
+ <form action="./${board}Update" method="post" id="frm" enctype="multipart/form-data">
 <!--  데이터가 크기 때문에 메소드는 포스트로, 파일 업로드시  enctype=multipart/form-data 필수 -->
  
  	<input type="hidden" name="num" value="${boardDTO.num}"> 
@@ -112,7 +151,7 @@ $(function() {
     
     <div class="form-group">
 	<label for="contents">Contents:</label>
-	<textarea class="form-control" rows="20" id="contents" name="contents">${boardDTO.contents}</textarea>
+	<textarea class="form-control" rows="10" id="contents" name="contents">${boardDTO.contents}</textarea>
 	</div>
 			
 			<div class="form-group" id="addFile">
@@ -128,7 +167,7 @@ $(function() {
 		    	<input type="button" value="Add" id="add" class="btn btn-primary">
 		    </div>
 		    
-		    <button class="btn btn-danger">Update</button>
+		    <input type="button" id="save" value="Update" class="btn btn-danger">
 		  </form>
 	
 	

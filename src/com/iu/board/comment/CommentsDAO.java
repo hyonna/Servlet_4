@@ -13,19 +13,20 @@ public class CommentsDAO {
 	
 	
 	
-	public List<CommentsDTO> selectList(SearchRow searchRow, Connection con) throws Exception {
+	public List<CommentsDTO> selectList(SearchRow searchRow, int num, Connection con) throws Exception {
 		
 		ArrayList<CommentsDTO> ar = new ArrayList<CommentsDTO>();
 		
-		String sql = "select * from"
+		String sql = "select * from "
 				+ "(select rownum R, C.* from "
-				+ "(select * from comments order by desc) C) "
+				+ "(select * from comments where num=? order by cnum desc) C) "
 				+ "where R between ? and ?";
 		
 		PreparedStatement st = con.prepareStatement(sql);
 		
-		st.setInt(1, searchRow.getStartRow());
-		st.setInt(2, searchRow.getLastRow());
+		st.setInt(1, num);
+		st.setInt(2, searchRow.getStartRow());
+		st.setInt(3, searchRow.getLastRow());
 		
 		ResultSet rs = st.executeQuery();
 		

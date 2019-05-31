@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.iu.member.MemberDTO;
+
 /**
  * Servlet implementation class HomeController
  */
@@ -29,6 +31,28 @@ public class HomeController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		String s = request.getParameter("s");
+		
+		
+		
+		if(s != null && s.equals("2")) { //ex : 2 -> admin
+			
+			MemberDTO memberDTO = new MemberDTO();
+			memberDTO.setId("admin");
+			request.getSession().setAttribute("member", memberDTO);
+			
+		} else if(s != null && s.equals("1")) { // 1 : 일반회원
+			
+			MemberDTO memberDTO = new MemberDTO();
+			memberDTO.setId("iu");
+			request.getSession().setAttribute("member", memberDTO);
+			
+			
+		} else if(s != null && s.equals("3")){ // 3 : 로그아웃
+			
+			request.getSession().invalidate();
+			
+		}
 		RequestDispatcher view = request.getRequestDispatcher("./WEB-INF/views/index.jsp");
 		view.forward(request, response);
 	}
